@@ -6,7 +6,8 @@ Simple signals and slots system inspired from Qt.
 
 ## Quick Example
 
-```var Signal = require('sigs');
+```
+var Signal = require('sigs');
 
 //Create event
 var onSomeEvent = new Signal();
