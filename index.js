@@ -5,6 +5,14 @@
 function Signal() {
     var _fns = [];
 
+	function remove(arr, item) {
+      for(var i = arr.length; i--;) {
+          if(arr[i] === item) {
+              arr.splice(i, 1);
+          }
+      }
+	}
+	
     /**
      * Connect current signal to the slot
      * @param fn
@@ -12,6 +20,10 @@ function Signal() {
     this.connect = function(fn) {
         _fns.push(fn);
     };
+	
+	this.disconnect = function(fn) {
+		remove(_fns, fn);
+	};
 
     /**
      * Emit event. Each argument will be passed to the slot
