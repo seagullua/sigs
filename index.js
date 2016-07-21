@@ -1,45 +1,59 @@
+function remove(arr, item) {
+    for(var i = arr.length; i--;) {
+        if(arr[i] === item) {
+            arr.splice(i, 1);
+        }
+    }
+}
+
 /**
  * Class for creating signals slots events
  * @constructor
  */
 function Signal() {
-    var _fns = [];
+    this._fns = [];
+}
 
-	function remove(arr, item) {
-      for(var i = arr.length; i--;) {
-          if(arr[i] === item) {
-              arr.splice(i, 1);
-          }
-      }
-	}
-	
-    /**
-     * Connect current signal to the slot
-     * @param fn
-     */
-    this.connect = function(fn) {
-        _fns.push(fn);
-    };
-	
-	this.disconnect = function(fn) {
-		remove(_fns, fn);
-	};
+/**
+ * Connect current signal to the slot
+ * @param fn
+ */
+Signal.prototype.connect = function(fn) {
+    this._fns.push(fn);
+};
 
-    /**
-     * Emit event. Each argument will be passed to the slot
-     */
-    this.emit = function() {
-        var a = this;
-        var b = arguments;
-        _fns.forEach(function(fn){
-            //Reemit the signal
-            if(fn instanceof Signal) {
-                fn.emit.apply(fn, b);
+Signal.prototype.disconnect = function(fn) {
+    this._fns.push(fn);
+};
+
+Signal.prototype._emitArguments = function(args) {
+    var _fns = this._fns;
+    var len = _fns.length;
+    for(var i=0; i<len; ++i) {
+        var fn = _fns[i];
+        if(fn instanceof Signal) {
+            fn._emitArguments(args);
+        } else {
+            var arg_len = args.length;
+            if(arg_len == 0) {
+                fn.call(this);
+            } else if(arg_len == 1) {
+                fn.call(this, args[0]);
+            } else if(arg_len == 2) {
+                fn.call(this, args[0], args[1]);
             } else {
-                fn.apply(a, b);
+                fn.apply(this, args);
             }
-        });
+        }
     }
+}
+
+/**
+ * Emit event. Each argument will be passed to the slot
+ */
+Signal.prototype.emit = function() {
+    var b = arguments;
+    this._emitArguments(b);
 }
 
 module.exports = Signal;
