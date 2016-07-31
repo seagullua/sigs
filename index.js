@@ -23,7 +23,7 @@ Signal.prototype.connect = function(fn) {
 };
 
 Signal.prototype.disconnect = function(fn) {
-    this._fns.push(fn);
+    remove(this._fns, fn);
 };
 
 Signal.prototype._emitArguments = function(args) {
